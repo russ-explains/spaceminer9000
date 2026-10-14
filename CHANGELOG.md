@@ -1,3 +1,7 @@
+## v1.9.60 — 2026-10-14
+- Renamed the game branding to **SpaceMiner9000** in the browser tab and title screen.
+- Updated the README to use the new game name; internal save keys remain unchanged to preserve existing local progress.
+
 ## v1.9.59 — 2026-10-14
 - Re-enabled the gameplay test cheats: **1** = asteroid flight, **2** = landing, **3** = mining, **4** = cavern escape.
 - Repeating the shortcut for the current section advances to the next planet; shortcuts stop at the final planet.
@@ -551,7 +555,7 @@
   - **4** = cavern escape
 - Added an on-screen mining control reminder for Space/W.
 
-All notable changes to Space Miner 1999 are recorded here.
+All notable changes to SpaceMiner9000 are recorded here.
 
 ## v1.1.2 — 2026-10-08
 ### Fixed
