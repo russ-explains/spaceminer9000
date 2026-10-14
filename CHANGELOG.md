@@ -1,3 +1,8 @@
+## v1.9.59 — 2026-10-14
+- Re-enabled the gameplay test cheats: **1** = asteroid flight, **2** = landing, **3** = mining, **4** = cavern escape.
+- Repeating the shortcut for the current section advances to the next planet; shortcuts stop at the final planet.
+- Re-enabled **T** to increase thrusters, **L** to increase lasers, **U** to grant full fuel, maximum hull/laser/thrust, three shields, full jetpack fuel and 99 banked gems, and **I** to open the upgrade screen during gameplay.
+
 ## v1.9.58 — 2026-10-11
 - Reduced the score threshold for earning a free extra ship from **50,000 points to 25,000 points**.
 - Updated the on-screen mission briefing and the displayed extra-ship rule to match the new threshold.
