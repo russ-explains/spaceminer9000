@@ -25,7 +25,7 @@
 <script>
 'use strict';
 
-const VERSION='v1.9.62';
+const VERSION='v1.9.63';;
 const c = document.getElementById('game');
 const ctx = c.getContext('2d');
 const crtEl=document.getElementById('crt');
@@ -983,28 +983,52 @@ function updateFlight(){
   if(planetDistance<planet.r+Math.max(45,Math.min(W,H)*.08))setupLander();
 }
 function spawnUfo(){
-  const a=rnd(0,Math.PI*2),r=Math.max(W,H)*.7;
-  ufo={x:clamp(ship.x+Math.cos(a)*r,40,flightWorldSize-40),y:clamp(ship.y+Math.sin(a)*r,40,flightWorldSize-40),t:0,hp:2+Math.floor(planetIndex/2),fireT:90};
-  msg='ALIEN SAUCER!';msgT=70;
+  // Enter just beyond a visible screen edge, then fly in to engage the player.
+  const side=Math.floor(rnd(0,4)),pad=38;
+  let x=ship.x,y=ship.y;
+  if(side===0){x=flightCameraX-pad;y=flightCameraY+rnd(50,H-50)}
+  else if(side===1){x=flightCameraX+W+pad;y=flightCameraY+rnd(50,H-50)}
+  else if(side===2){x=flightCameraX+rnd(50,W-50);y=flightCameraY-pad}
+  else{x=flightCameraX+rnd(50,W-50);y=flightCameraY+H+pad}
+  ufo={x:clamp(x,30,flightWorldSize-30),y:clamp(y,30,flightWorldSize-30),t:0,hp:2+Math.floor(planetIndex/2),fireT:90,phase:'approach',phaseT:0,orbitAngle:Math.atan2(y-ship.y,x-ship.x)};
+  msg='ALIEN SAUCER INBOUND!';msgT=70;
 }
 function updateUfo(){
   if(ufo){
-    ufo.t++;
+    ufo.t++;ufo.phaseT++;
     const dx=ship.x-ufo.x,dy=ship.y-ufo.y,d=Math.hypot(dx,dy)||1;
-    if(ufo.t<600){ufo.x+=dx/d*.35+Math.sin(ufo.t*.012)*.5;ufo.y+=dy/d*.35+Math.cos(ufo.t*.014)*.5}
-    else{ufo.x+=dx/d*2.2;ufo.y+=dy/d*2.2}
-    ufo.x=clamp(ufo.x,25,flightWorldSize-25);ufo.y=clamp(ufo.y,25,flightWorldSize-25);
-    if(ufo.t%22===0)beep(ufo.t%44?700:560,.08,'triangle',.018);
-    if(--ufo.fireT<=0){
-      const sx=ship.x-ufo.x,sy=ship.y-ufo.y,sd=Math.hypot(sx,sy)||1,sp=3.1+planetIndex*.3;
-      ebullets.push({x:ufo.x,y:ufo.y,vx:sx/sd*sp,vy:sy/sd*sp,life:440});
-      if(planetIndex>=2)saucerBombs.push({x:ufo.x,y:ufo.y+12,vx:0,vy:.7,life:240,age:0});
-      sfx('alien');ufo.fireT=rnd(70,110)-planetIndex*8;
+    if(ufo.phase==='approach'){
+      // Pursue the player's current position until close enough to begin circling.
+      const speed=2.0+planetIndex*.12;
+      ufo.x+=dx/d*speed;ufo.y+=dy/d*speed;
+      if(d<Math.min(W,H)*.32){ufo.phase='orbit';ufo.phaseT=0;ufo.orbitAngle=Math.atan2(ufo.y-ship.y,ufo.x-ship.x)}
+    } else if(ufo.phase==='orbit'){
+      // Keep the orbit centred on the moving player for roughly four seconds.
+      ufo.orbitAngle+=.045;
+      const radius=Math.min(W,H)*.19;
+      const tx=ship.x+Math.cos(ufo.orbitAngle)*radius,ty=ship.y+Math.sin(ufo.orbitAngle)*radius;
+      ufo.x+=(tx-ufo.x)*.12;ufo.y+=(ty-ufo.y)*.12;
+      if(ufo.phaseT>=240){ufo.phase='depart';ufo.phaseT=0;ufo.departAngle=ufo.orbitAngle}
+    } else {
+      // Break away and leave the visible play area rather than chasing indefinitely.
+      ufo.x+=Math.cos(ufo.departAngle)*4.2;
+      ufo.y+=Math.sin(ufo.departAngle)*4.2;
+      const sx=ufo.x-flightCameraX,sy=ufo.y-flightCameraY;
+      if(sx<-90||sx>W+90||sy<-90||sy>H+90||ufo.phaseT>240)ufo=null;
     }
-    if(Math.abs(ship.x-ufo.x)<28&&Math.abs(ship.y-ufo.y)<20&&ship.inv===0){
-      burst(ship.x,ship.y,20);if(damage('HULL DESTROYED — SAUCER COLLISION','SAUCER HIT',true,true)&&state!=='flight')return;
+    if(ufo){
+      ufo.x=clamp(ufo.x,25,flightWorldSize-25);ufo.y=clamp(ufo.y,25,flightWorldSize-25);
+      if(ufo.t%22===0)beep(ufo.t%44?700:560,.08,'triangle',.018);
+      if(--ufo.fireT<=0){
+        const sx=ship.x-ufo.x,sy=ship.y-ufo.y,sd=Math.hypot(sx,sy)||1,sp=3.1+planetIndex*.3;
+        ebullets.push({x:ufo.x,y:ufo.y,vx:sx/sd*sp,vy:sy/sd*sp,life:440});
+        if(planetIndex>=2)saucerBombs.push({x:ufo.x,y:ufo.y+12,vx:0,vy:.7,life:240,age:0});
+        sfx('alien');ufo.fireT=rnd(70,110)-planetIndex*8;
+      }
+      if(Math.abs(ship.x-ufo.x)<28&&Math.abs(ship.y-ufo.y)<20&&ship.inv===0){
+        burst(ship.x,ship.y,20);if(damage('HULL DESTROYED — SAUCER COLLISION','SAUCER HIT',true,true)&&state!=='flight')return;
+      }
     }
-    if(Math.hypot(ship.x-ufo.x,ship.y-ufo.y)>Math.max(W,H)*2&&ufo.t>600)ufo=null;
   }
   ebullets.forEach(b=>{b.x+=b.vx;b.y+=b.vy;b.life--;
     if(Math.abs(b.x-ship.x)<11&&Math.abs(b.y-ship.y)<14&&ship.inv===0&&state==='flight'){b.life=0;burst(ship.x,ship.y,14);if(shieldT<=0)damage('HULL DESTROYED — SAUCER FIRE','SAUCER FIRE')}
