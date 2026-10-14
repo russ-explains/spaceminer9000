@@ -163,7 +163,7 @@ const planets=[
  {name:'BIG RED', tint:'#ff5050', aliens:14, gems:8, fuel:2}
 ];
 const ORE='#ffd36b';
-const FLY_BASE=1.6;          // autoscroll speed in deep space (px/frame)
+const FLY_BASE=1.6;          // used to size each square exploration map
 const EXTRA_LIFE_EVERY=25000;
 
 function loadTable(){
@@ -854,7 +854,7 @@ function splitAsteroid(a, impactVX=0, impactVY=0){
 }
 
 /* --------------------------------------------------------------- FLIGHT */
-// Side-scrolling like Scramble/Defender: the world always moves; pushing right speeds it up.
+// Free-flight exploration: the player moves through a square world and the camera follows on both axes.
 function updateFlight(){
   stageTimer++;
   const thrust=.09*ship.thrust, turn=.05;
