@@ -1,3 +1,8 @@
+## v1.9.62 — 2026-10-14
+- Made asteroid exploration substantially busier: seed the starting area with 85 asteroids, increasing by 15 per planet.
+- Keep up to 140 nearby asteroids active and replenish the field every few frames, with additional rocks on later planets.
+- Remove distant rocks from active simulation to keep collision processing manageable while exploring.
+
 ## v1.9.61 — 2026-10-14
 - Reworked asteroid flight into a square free-exploration map, using the original flight distance for both world width and height.
 - Removed automatic horizontal scrolling; the ship can explore in any direction while the camera follows across the map.
