@@ -1,3 +1,7 @@
+## v1.9.63 — 2026-10-14
+- Alien saucers now enter from just beyond a visible screen edge and actively pursue the ship.
+- When close, they circle the moving player for about four seconds while continuing their attack, then break away and leave the screen.
+
 ## v1.9.62 — 2026-10-14
 - Made asteroid exploration substantially busier: seed the starting area with 85 asteroids, increasing by 15 per planet.
 - Keep up to 140 nearby asteroids active and replenish the field every few frames, with additional rocks on later planets.
