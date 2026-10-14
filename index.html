@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Space Miner 4000</title>
+<title>SpaceMiner9000</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
 <script>
 'use strict';
 
-const VERSION='v1.9.59';
+const VERSION='v1.9.60';
 const c = document.getElementById('game');
 const ctx = c.getContext('2d');
 const crtEl=document.getElementById('crt');
@@ -1951,7 +1951,7 @@ function drawInfo(){
   const pw=Math.min(W-24,760), ph=Math.min(H-24,Math.max(410,H*.84)), px=(W-pw)/2, py=(H-ph)/2;
   ctx.fillStyle='#080b10';ctx.fillRect(px,py,pw,ph);
   ctx.strokeStyle=ORE;ctx.lineWidth=2;ctx.strokeRect(px+2,py+2,pw-4,ph-4);
-  ctx.fillStyle=ORE;arc('SPACE MINER 4000',W/2,py+38,W<520?18:25,'center',pw-28);
+  ctx.fillStyle=ORE;arc('SPACEMINER9000',W/2,py+38,W<520?18:25,'center',pw-28);
   ctx.fillStyle='#fff';arc('MISSION BRIEFING',W/2,py+66,W<520?10:13,'center',pw-28);
   const small=W<520, fs=small?12:16, lh=small?25:31, x=px+18;
   let y=py+100;
