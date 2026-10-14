@@ -1,3 +1,9 @@
+## v1.9.61 — 2026-10-14
+- Reworked asteroid flight into a square free-exploration map, using the original flight distance for both world width and height.
+- Removed automatic horizontal scrolling; the ship can explore in any direction while the camera follows across the map.
+- Moved the destination planet to a discoverable location in the world, added a directional pointer and distance readout, and begin landing when the ship reaches the planet.
+- Asteroids, fuel rings, pickups and saucer encounters now exist in world space and are encountered while exploring.
+
 ## v1.9.60 — 2026-10-14
 - Renamed the game branding to **SpaceMiner9000** in the browser tab and title screen.
 - Updated the README to use the new game name; internal save keys remain unchanged to preserve existing local progress.
