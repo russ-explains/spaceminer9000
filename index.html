@@ -25,7 +25,7 @@
 <script>
 'use strict';
 
-const VERSION='v1.9.61';
+const VERSION='v1.9.62';
 const c = document.getElementById('game');
 const ctx = c.getContext('2d');
 const crtEl=document.getElementById('crt');
@@ -356,7 +356,17 @@ function setupFlight(respawn=false){
     dist=0;tripDist=FLY_BASE*60*(85+planetIndex*8);flightWorldSize=tripDist;
     flightPlanetX=flightWorldSize*rnd(.70,.88);
     flightPlanetY=flightWorldSize*rnd(.18,.82);
-    asteroids=[];gasRings=[];pickups=[];nextRock=70;nextRing=240;section=0;beatT=60;
+    asteroids=[];gasRings=[];pickups=[];nextRock=4;nextRing=100;section=0;beatT=60;
+    // Seed the starting neighbourhood so the new exploration map feels like an asteroid field immediately.
+    const startingRocks=85+planetIndex*15;
+    for(let i=0;i<startingRocks;i++){
+      const angle=rnd(0,Math.PI*2),radius=rnd(Math.min(W,H)*.22,Math.max(W,H)*1.05);
+      const x=clamp(ship.x+Math.cos(angle)*radius,60,flightWorldSize-60);
+      const y=clamp(ship.y+Math.sin(angle)*radius,60,flightWorldSize-60);
+      const a=makeAsteroid(x,y,Math.random()<.19,Math.random()<.3);
+      const sizeScale=planetIndex>=2?1+(planetIndex-1)*.15:1+planetIndex*.04;
+      a.r*=sizeScale;a.mass=a.r*a.r;asteroids.push(a);
+    }
     planet={r:70+planetIndex*14};
     initStars();
   }
@@ -889,17 +899,17 @@ function updateFlight(){
   }
 
   // Populate the unexplored space around the player, rather than scrolling the world past them.
-  if(--nextRock<=0){
-    const angle=rnd(0,Math.PI*2),radius=Math.max(W,H)*rnd(.58,.9);
+  if(--nextRock<=0 && asteroids.length<140){
+    const angle=rnd(0,Math.PI*2),radius=Math.max(W,H)*rnd(.28,.78);
     const x=clamp(ship.x+Math.cos(angle)*radius,50,flightWorldSize-50);
     const y=clamp(ship.y+Math.sin(angle)*radius,50,flightWorldSize-50);
-    if(Math.hypot(x-ship.x,y-ship.y)>Math.min(W,H)*.48){
+    if(Math.hypot(x-ship.x,y-ship.y)>Math.min(W,H)*.20){
       const a=makeAsteroid(x,y,Math.random()<.17,sec>=2);
       const sizeScale=planetIndex>=2?1+(planetIndex-1)*.15:1+planetIndex*.04;
       a.r*=sizeScale;a.mass=a.r*a.r;asteroids.push(a);
     }
     const density=Math.max(.58,1-planetIndex*.10);
-    nextRock=Math.max(28,rnd(35,75)*density);
+    nextRock=Math.max(2,rnd(3,8)*density);
   }
   if(--nextRing<=0){
     const angle=rnd(0,Math.PI*2),radius=Math.max(W,H)*rnd(.5,.85);
@@ -967,7 +977,8 @@ function updateFlight(){
     }
   }
   if(state!=='flight')return;
-  asteroids=asteroids.filter(a=>!a.dead&&a.x>-100&&a.x<flightWorldSize+100&&a.y>-100&&a.y<flightWorldSize+100);
+  const activeRadius=Math.max(W,H)*1.7;
+  asteroids=asteroids.filter(a=>!a.dead&&a.x>=0&&a.x<=flightWorldSize&&a.y>=0&&a.y<=flightWorldSize&&Math.hypot(a.x-ship.x,a.y-ship.y)<activeRadius);
   // Finding the planet is the objective: reaching its atmosphere begins the landing sequence.
   if(planetDistance<planet.r+Math.max(45,Math.min(W,H)*.08))setupLander();
 }
