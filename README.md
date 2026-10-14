@@ -1,4 +1,4 @@
-# Space Miner 4000
+# SpaceMiner9000
 
 A small retro vector browser game: **FLY → LAND → MINE → UPGRADE → ESCAPE → REPEAT** across five planets.
 
